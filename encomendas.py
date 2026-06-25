@@ -1,52 +1,61 @@
-encomendas = []
+from dados import encomendas
 
 def criar_encomenda():
+
     cliente = input("Cliente: ")
     produto = input("Produto: ")
 
-    encomenda = {
+    nova = {
         "cliente": cliente,
         "produto": produto,
         "estado": "Recebida"
     }
 
-    encomendas.append(encomenda)
+    encomendas.append(nova)
 
     print("Encomenda criada!")
 
 def listar_encomendas():
 
+    print("\n=== ENCOMENDAS ===")
+
     if len(encomendas) == 0:
-        print("Sem encomendas.")
+        print("Não existem encomendas.")
         return
 
-    for i in range(len(encomendas)):
+    for i, encomenda in enumerate(encomendas):
+
         print(
             i + 1,
-            encomendas[i]["cliente"],
-            encomendas[i]["produto"],
-            encomendas[i]["estado"]
+            "-",
+            encomenda["cliente"],
+            "-",
+            encomenda["produto"],
+            "-",
+            encomenda["estado"]
         )
 
-def atualizar_estado():
+def alterar_estado():
 
     listar_encomendas()
 
-    indice = int(input("Número da encomenda: ")) - 1
+    numero = int(input("Número da encomenda: ")) - 1
 
-    print("1 - Em preparação")
-    print("2 - Pronta")
-    print("3 - Entregue")
+    if 0 <= numero < len(encomendas):
 
-    op = input("Estado: ")
+        print("1 - Em preparação")
+        print("2 - Pronta")
+        print("3 - Entregue")
 
-    if op == "1":
-        encomendas[indice]["estado"] = "Em preparação"
+        op = input("Novo estado: ")
 
-    elif op == "2":
-        encomendas[indice]["estado"] = "Pronta"
+        if op == "1":
+            encomendas[numero]["estado"] = "Em preparação"
 
-    elif op == "3":
-        encomendas[indice]["estado"] = "Entregue"
+        elif op == "2":
+            encomendas[numero]["estado"] = "Pronta"
 
-    print("Estado atualizado!")
+        elif op == "3":
+            encomendas[numero]["estado"] = "Entregue"
+
+        print("Estado atualizado!")

@@ -1,24 +1,17 @@
-from encomendas import encomendas
+from dados import encomendas
 
+def relatorio():
 
-def gerar_relatorio():
-
-
-    print("\n=== RELATÓRIO ===")
-
-
-    print("Total de encomendas:", len(encomendas))
-
+    total = len(encomendas)
 
     entregues = 0
 
-
     for encomenda in encomendas:
-
 
         if encomenda["estado"] == "Entregue":
             entregues += 1
 
-
+    print("\n=== RELATÓRIO ===")
+    print("Total:", total)
     print("Entregues:", entregues)
-
+    print("Pendentes:", total - entregues)
