@@ -1,61 +1,135 @@
-from dados import encomendas
+import sqlite3
+
 
 def criar_encomenda():
 
-    cliente = input("Cliente: ")
-    produto = input("Produto: ")
+    cliente = input("Nome do cliente: ")
 
-    nova = {
-        "cliente": cliente,
-        "produto": produto,
-        "estado": "Recebida"
-    }
+    ligacao = sqlite3.connect("batatatracker.db")
+    cursor = ligacao.cursor()
 
-    encomendas.append(nova)
+    cursor.execute(
+        "SELECT * FROM produtos"
+    )
+
+    produtos = cursor.fetchall()
+
+    print("\n=== PRODUTOS ===")
+
+    for produto in produtos:
+
+        print(
+            f"{produto[0]} - "
+            f"{produto[1]} - "
+            f"{produto[2]:.2f}€"
+        )
+
+    escolha = int(input("\nProduto: "))
+
+    cursor.execute(
+        "SELECT nome, preco FROM produtos WHERE id = ?",
+        (escolha,)
+    )
+
+    produto = cursor.fetchone()
+
+    if produto is None:
+        print("Produto inválido.")
+        ligacao.close()
+        return
+
+    cursor.execute(
+        """
+        INSERT INTO encomendas
+        (cliente, produto, preco, estado)
+        VALUES (?, ?, ?, ?)
+        """,
+        (
+            cliente,
+            produto[0],
+            produto[1],
+            "Recebida"
+        )
+    )
+
+    ligacao.commit()
+    ligacao.close()
 
     print("Encomenda criada!")
 
 def listar_encomendas():
 
+    ligacao = sqlite3.connect("batatatracker.db")
+    cursor = ligacao.cursor()
+
+    cursor.execute(
+        "SELECT * FROM encomendas"
+    )
+
+    encomendas = cursor.fetchall()
+
     print("\n=== ENCOMENDAS ===")
 
     if len(encomendas) == 0:
         print("Não existem encomendas.")
-        return
 
-    for i, encomenda in enumerate(encomendas):
+    else:
 
-        print(
-            i + 1,
-            "-",
-            encomenda["cliente"],
-            "-",
-            encomenda["produto"],
-            "-",
-            encomenda["estado"]
-        )
+        for encomenda in encomendas:
+
+            print(
+                f"{encomenda[0]} - "
+                f"{encomenda[1]} - "
+                f"{encomenda[2]} - "
+                f"{encomenda[3]:.2f}€ - "
+                f"{encomenda[4]}"
+            )
+
+    ligacao.close()
 
 def alterar_estado():
 
     listar_encomendas()
 
-    numero = int(input("Número da encomenda: ")) - 1
+    numero = int(
+        input("\nID da encomenda: ")
+    )
 
-    if 0 <= numero < len(encomendas):
+    print("1 - Em preparação")
+    print("2 - Pronta")
+    print("3 - Entregue")
 
-        print("1 - Em preparação")
-        print("2 - Pronta")
-        print("3 - Entregue")
+    op = input("Novo estado: ")
 
-        op = input("Novo estado: ")
+    if op == "1":
+        estado = "Em preparação"
 
-        if op == "1":
-            encomendas[numero]["estado"] = "Em preparação"
+    elif op == "2":
+        estado = "Pronta"
 
-        elif op == "2":
-            encomendas[numero]["estado"] = "Pronta"
+    elif op == "3":
+        estado = "Entregue"
 
-        elif op == "3":
-            encomendas[numero]["estado"] = "Entregue"
+    else:
+        print("Opção inválida.")
+        return
 
-        print("Estado atualizado!")
+    ligacao = sqlite3.connect(
+        "batatatracker.db"
+    )
+
+    cursor = ligacao.cursor()
+
+    cursor.execute(
+        """
+        UPDATE encomendas
+        SET estado = ?
+        WHERE id = ?
+        """,
+        (estado, numero)
+    )
+
+    ligacao.commit()
+    ligacao.close()
+
+    print("Estado atualizado!")

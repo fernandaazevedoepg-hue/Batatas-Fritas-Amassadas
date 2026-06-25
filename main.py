@@ -1,46 +1,70 @@
+import os
+import base_dados
+
 from encomendas import *
-from stock import *
 from produtos import *
+from stock import *
 from relatorios import *
+
+
+def limpar():
+    os.system(
+        "cls" if os.name == "nt"
+        else "clear"
+    )
+
 
 while True:
 
-    print("\n=== BATATATRACKER ===")
+    limpar()
+
+    print("================================")
+    print("          BATATA TRACKER")
+    print("================================")
     print("1 - Nova encomenda")
     print("2 - Ver encomendas")
     print("3 - Alterar estado")
     print("4 - Ver stock")
-    print("5 - Atualizar stock")
-    print("6 - Ver produtos")
-    print("7 - Adicionar produto")
-    print("8 - Relatório")
+    print("5 - Ver produtos")
+    print("6 - Adicionar produto")
+    print("7 - Relatório")
     print("0 - Sair")
 
-    op = input("Opção: ")
+    opcao = input(
+        "\nEscolha uma opção: "
+    )
 
-    if op == "1":
+    if opcao == "1":
+        limpar()
         criar_encomenda()
 
-    elif op == "2":
+    elif opcao == "2":
+        limpar()
         listar_encomendas()
 
-    elif op == "3":
+    elif opcao == "3":
+        limpar()
         alterar_estado()
 
-    elif op == "4":
+    elif opcao == "4":
+        limpar()
         mostrar_stock()
 
-    elif op == "5":
-        atualizar_stock()
-
-    elif op == "6":
+    elif opcao == "5":
+        limpar()
         mostrar_produtos()
 
-    elif op == "7":
+    elif opcao == "6":
+        limpar()
         adicionar_produto()
 
-    elif op == "8":
-        relatorio()
+    elif opcao == "7":
+        limpar()
+        gerar_relatorio()
 
-    elif op == "0":
+    elif opcao == "0":
         break
+
+    input(
+        "\nPrima ENTER para continuar..."
+    )

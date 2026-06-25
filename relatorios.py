@@ -1,17 +1,49 @@
-from dados import encomendas
+import sqlite3
 
-def relatorio():
 
-    total = len(encomendas)
+def gerar_relatorio():
 
-    entregues = 0
+    ligacao = sqlite3.connect(
+        "batatatracker.db"
+    )
 
-    for encomenda in encomendas:
+    cursor = ligacao.cursor()
 
-        if encomenda["estado"] == "Entregue":
-            entregues += 1
+    cursor.execute(
+        "SELECT COUNT(*) FROM encomendas"
+    )
+
+    total = cursor.fetchone()[0]
+
+    cursor.execute(
+        """
+        SELECT COUNT(*)
+        FROM encomendas
+        WHERE estado = 'Entregue'
+        """
+    )
+
+    entregues = cursor.fetchone()[0]
+
+    cursor.execute(
+        """
+        SELECT SUM(preco)
+        FROM encomendas
+        WHERE estado = 'Entregue'
+        """
+    )
+
+    faturacao = cursor.fetchone()[0]
+
+    if faturacao is None:
+        faturacao = 0
 
     print("\n=== RELATÓRIO ===")
-    print("Total:", total)
-    print("Entregues:", entregues)
+    print("Total de encomendas:", total)
+    print("Encomendas entregues:", entregues)
     print("Pendentes:", total - entregues)
+    print(
+        f"Faturação: {faturacao:.2f}€"
+    )
+
+    ligacao.close()

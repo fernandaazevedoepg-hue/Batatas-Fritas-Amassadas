@@ -1,28 +1,27 @@
-from dados import stock
+import sqlite3
+
 
 def mostrar_stock():
 
+    ligacao = sqlite3.connect(
+        "batatatracker.db"
+    )
+
+    cursor = ligacao.cursor()
+
+    cursor.execute(
+        "SELECT * FROM stock"
+    )
+
+    stock = cursor.fetchall()
+
     print("\n=== STOCK ===")
 
-    for ingrediente in stock:
+    for item in stock:
+
         print(
-            ingrediente,
-            "-",
-            stock[ingrediente]
+            f"{item[1]} - "
+            f"{item[2]}"
         )
 
-def atualizar_stock():
-
-    ingrediente = input("Ingrediente: ")
-
-    if ingrediente in stock:
-
-        quantidade = int(input("Nova quantidade: "))
-
-        stock[ingrediente] = quantidade
-
-        print("Stock atualizado!")
-
-    else:
-        print("Ingrediente não encontrado.")
-
+    ligacao.close()

@@ -1,18 +1,26 @@
-from dados import produtos
+import sqlite3
+
 
 def mostrar_produtos():
+
+    ligacao = sqlite3.connect("batatatracker.db")
+    cursor = ligacao.cursor()
+
+    cursor.execute("SELECT * FROM produtos")
+
+    produtos = cursor.fetchall()
 
     print("\n=== PRODUTOS ===")
 
     for produto in produtos:
+
         print(
-            produto["id"],
-            "-",
-            produto["nome"],
-            "-",
-            produto["preco"],
-            "€"
+            f"{produto[0]} - "
+            f"{produto[1]} - "
+            f"{produto[2]:.2f}€"
         )
+
+    ligacao.close()
 
 
 def adicionar_produto():
@@ -20,12 +28,15 @@ def adicionar_produto():
     nome = input("Nome do produto: ")
     preco = float(input("Preço: "))
 
-    novo = {
-        "id": len(produtos) + 1,
-        "nome": nome,
-        "preco": preco
-    }
+    ligacao = sqlite3.connect("batatatracker.db")
+    cursor = ligacao.cursor()
 
-    produtos.append(novo)
+    cursor.execute(
+        "INSERT INTO produtos(nome, preco) VALUES (?, ?)",
+        (nome, preco)
+    )
+
+    ligacao.commit()
+    ligacao.close()
 
     print("Produto adicionado!")
